@@ -72,118 +72,114 @@
 </div>
   </template>
 <script>
+import { computed } from 'vue';
 import parts from '../data/part';
 import { toCurrency } from '../shared/formatters';
-import createdHook from './created-hook-mixin';
-
-function getPreviousValidIndex(index, length) {
-  const deprecatedIndex = index - 1;
-  return deprecatedIndex < 0 ? length - 1 : deprecatedIndex;
-}
-
-function getNextValidIndex(index, length) {
-  debugger;
-  const incrementedIndex = index + 1;
-  return incrementedIndex > length + 1 ? 0 : incrementedIndex;
-}
 
 export default {
   name: 'RobotBuilder',
-  mixins: [createdHook],
-  // created() {
-  //   console.log('component created');
-  // },
-  data() {
-    console.log('data method');
-    return {
-      availableParts: parts,
-      partsIndex: {
-        head: 0,
-        leftArm: 0,
-        rightArm: 0,
-        bases: 0,
-        torsos: 0,
-      },
-      cart: [],
+  setup: () => {
+    const availableParts = parts;
+    const partsIndex = {
+      head: 0,
+      leftArm: 0,
+      rightArm: 0,
+      bases: 0,
+      torsos: 0,
     };
-  },
-  computed: {
+    const cart = [];
+    function getPreviousValidIndex(index, length) {
+      const deprecatedIndex = index - 1;
+      return deprecatedIndex < 0 ? length - 1 : deprecatedIndex;
+    }
 
-    selectedRobot() {
+    function getNextValidIndex(index, length) {
+      debugger;
+      const incrementedIndex = index + 1;
+      return incrementedIndex > length + 1 ? 0 : incrementedIndex;
+    }
+    const selectedRobot = computed(() => {
       console.log('data method');
       return {
-        head: this.availableParts.heads[this.partsIndex.head],
-        leftArm: this.availableParts.arms[this.partsIndex.leftArm],
-        rightArm: this.availableParts.arms[this.partsIndex.rightArm],
-        torsos: this.availableParts.torsos[this.partsIndex.torsos],
-        bases: this.availableParts.bases[this.partsIndex.bases],
+        head: availableParts.heads[partsIndex.head],
+        leftArm: availableParts.arms[partsIndex.leftArm],
+        rightArm: availableParts.arms[partsIndex.rightArm],
+        torsos: availableParts.torsos[partsIndex.torsos],
+        bases: availableParts.bases[partsIndex.bases],
       };
-    },
-    cost() {
-      let sum = 0;
-      this.cart?.forEach((r) => {
-        sum += r.cost;
-      });
-      return sum;
-    },
-  },
-
-  methods: {
-    addToCatt() {
-      const robot = this.selectedRobot;
+    });
+    const addToCatt = () => {
+      const robot = selectedRobot;
       const cost = robot.head.cost +
           robot.rightArm.cost +
           robot.leftArm.cost +
           robot.rightArm.cost +
           robot.torsos.cost +
           robot.bases.cost;
-      this.cart.push({ ...robot, cost });
-    },
-    toCurrency,
-    selectNextHead() {
-      this.partsIndex.head = getNextValidIndex(
-        this.partsIndex.head,
-        this.availableParts.heads.length,
+      cart.push({ ...robot, cost });
+    };
+    const selectNextHead = () => {
+      partsIndex.head = getNextValidIndex(
+        partsIndex.head,
+        availableParts.heads.length,
       );
-    },
-    selectPrevHead() {
-      this.partsIndex.head = getPreviousValidIndex(
-        this.partsIndex.head,
-        this.availableParts.heads.length,
+    };
+    const selectPrevHead = () => {
+      partsIndex.head = getPreviousValidIndex(
+        partsIndex.head,
+        availableParts.heads.length,
       );
-    },
-    selectNexLeftArm() {
-      this.partsIndex.leftArm =
-       getNextValidIndex(this.partsIndex.leftArm, this.availableParts.arms.length);
-    },
-    selectPrevlefttArm() {
-      this.partsIndex.leftArm
-      = getPreviousValidIndex(this.partsIndex.leftArm, this.availableParts.arms.length);
-    },
-    selectNextTorso() {
-      this.partsIndex.torsos =
-       getNextValidIndex(this.partsIndex.torsos, this.availableParts.torsos.length);
-    },
-    selectPrevTorso() {
-      this.partsIndex.torsos =
-      getPreviousValidIndex(this.partsIndex.torsos, this.availableParts.torsos.length);
-    },
-    selectPrevRightArm() {
-      this.partsIndex.rightArm =
-      getPreviousValidIndex(this.partsIndex.rightArm, this.availableParts.arms.length);
-    },
-    selectNextRightArm() {
-      this.partsIndex.rightArm =
-       getNextValidIndex(this.partsIndex.rightArm, this.availableParts.arms.length);
-    },
-    selectNextBase() {
-      this.partsIndex.bases =
-      getNextValidIndex(this.partsIndex.bases, this.availableParts.bases.length);
-    },
-    selectPrevBase() {
-      this.partsIndex.bases =
-      getPreviousValidIndex(this.partsIndex.bases, this.availableParts.bases.length);
-    },
+    };
+    const selectNexLeftArm = () => {
+      partsIndex.leftArm =
+       getNextValidIndex(partsIndex.leftArm, availableParts.arms.length);
+    };
+    const selectPrevlefttArm = () => {
+      partsIndex.leftArm
+      = getPreviousValidIndex(partsIndex.leftArm, availableParts.arms.length);
+    };
+    const selectNextTorso = () => {
+      partsIndex.torsos =
+       getNextValidIndex(partsIndex.torsos, availableParts.torsos.length);
+    };
+    const selectPrevTorso = () => {
+      partsIndex.torsos =
+      getPreviousValidIndex(partsIndex.torsos, availableParts.torsos.length);
+    };
+    const selectPrevRightArm = () => {
+      partsIndex.rightArm =
+      getPreviousValidIndex(partsIndex.rightArm, availableParts.arms.length);
+    };
+    const selectNextRightArm = () => {
+      partsIndex.rightArm =
+       getNextValidIndex(partsIndex.rightArm, availableParts.arms.length);
+    };
+    const selectNextBase = () => {
+      partsIndex.bases =
+      getNextValidIndex(partsIndex.bases, availableParts.bases.length);
+    };
+    const selectPrevBase = () => {
+      partsIndex.bases =
+      getPreviousValidIndex(partsIndex.bases, availableParts.bases.length);
+    };
+    return {
+      availableParts,
+      partsIndex,
+      cart,
+      selectedRobot,
+      toCurrency,
+      addToCatt,
+      selectNextHead,
+      selectPrevHead,
+      selectNexLeftArm,
+      selectPrevlefttArm,
+      selectNextTorso,
+      selectPrevTorso,
+      selectPrevRightArm,
+      selectNextRightArm,
+      selectPrevBase,
+      selectNextBase,
+    };
   },
 };
 
