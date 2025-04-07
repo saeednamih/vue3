@@ -72,19 +72,24 @@
 </div>
   </template>
 <script setup>
-import { computed } from 'vue';
+import {
+  computed, ref, reactive, onMounted,
+} from 'vue';
 import parts from '../data/part';
 import { toCurrency } from '../shared/formatters';
 
+onMounted(() => {
+  console.log('created');
+});
 const availableParts = parts;
-const partsIndex = {
+const partsIndex = ref({
   head: 0,
   leftArm: 0,
   rightArm: 0,
   bases: 0,
   torsos: 0,
-};
-const cart = [];
+});
+const cart = reactive([]);
 function getPreviousValidIndex(index, length) {
   const deprecatedIndex = index - 1;
   return deprecatedIndex < 0 ? length - 1 : deprecatedIndex;
@@ -98,15 +103,17 @@ function getNextValidIndex(index, length) {
 const selectedRobot = computed(() => {
   console.log('data method');
   return {
-    head: availableParts.heads[partsIndex.head],
-    leftArm: availableParts.arms[partsIndex.leftArm],
-    rightArm: availableParts.arms[partsIndex.rightArm],
-    torsos: availableParts.torsos[partsIndex.torsos],
-    bases: availableParts.bases[partsIndex.bases],
+    head: availableParts.heads[partsIndex.value.head],
+    leftArm: availableParts.arms[partsIndex.value.leftArm],
+    rightArm: availableParts.arms[partsIndex.value.rightArm],
+    torsos: availableParts.torsos[partsIndex.value.torsos],
+    bases: availableParts.bases[partsIndex.value.bases],
   };
 });
+
 const addToCatt = () => {
-  const robot = selectedRobot;
+  debugger;
+  const robot = selectedRobot.value;
   const cost = robot.head.cost +
           robot.rightArm.cost +
           robot.leftArm.cost +
@@ -116,48 +123,48 @@ const addToCatt = () => {
   cart.push({ ...robot, cost });
 };
 const selectNextHead = () => {
-  partsIndex.head = getNextValidIndex(
-    partsIndex.head,
+  partsIndex.value.head = getNextValidIndex(
+    partsIndex.value.head,
     availableParts.heads.length,
   );
 };
 const selectPrevHead = () => {
-  partsIndex.head = getPreviousValidIndex(
-    partsIndex.head,
+  partsIndex.value.head = getPreviousValidIndex(
+    partsIndex.value.head,
     availableParts.heads.length,
   );
 };
 const selectNexLeftArm = () => {
-  partsIndex.leftArm =
-       getNextValidIndex(partsIndex.leftArm, availableParts.arms.length);
+  partsIndex.value.leftArm =
+       getNextValidIndex(partsIndex.value.leftArm, availableParts.arms.length);
 };
 const selectPrevlefttArm = () => {
-  partsIndex.leftArm
-      = getPreviousValidIndex(partsIndex.leftArm, availableParts.arms.length);
+  partsIndex.value.leftArm
+      = getPreviousValidIndex(partsIndex.value.leftArm, availableParts.arms.length);
 };
 const selectNextTorso = () => {
-  partsIndex.torsos =
-       getNextValidIndex(partsIndex.torsos, availableParts.torsos.length);
+  partsIndex.value.torsos =
+       getNextValidIndex(partsIndex.value.torsos, availableParts.torsos.length);
 };
 const selectPrevTorso = () => {
-  partsIndex.torsos =
-      getPreviousValidIndex(partsIndex.torsos, availableParts.torsos.length);
+  partsIndex.value.torsos =
+      getPreviousValidIndex(partsIndex.value.torsos, availableParts.torsos.length);
 };
 const selectPrevRightArm = () => {
-  partsIndex.rightArm =
-      getPreviousValidIndex(partsIndex.rightArm, availableParts.arms.length);
+  partsIndex.value.rightArm =
+      getPreviousValidIndex(partsIndex.value.rightArm, availableParts.arms.length);
 };
 const selectNextRightArm = () => {
-  partsIndex.rightArm =
-       getNextValidIndex(partsIndex.rightArm, availableParts.arms.length);
+  partsIndex.value.rightArm =
+       getNextValidIndex(partsIndex.value.rightArm, availableParts.arms.length);
 };
 const selectNextBase = () => {
-  partsIndex.bases =
-      getNextValidIndex(partsIndex.bases, availableParts.bases.length);
+  partsIndex.value.bases =
+      getNextValidIndex(partsIndex.value.bases, availableParts.bases.length);
 };
 const selectPrevBase = () => {
-  partsIndex.bases =
-      getPreviousValidIndex(partsIndex.bases, availableParts.bases.length);
+  partsIndex.value.bases =
+      getPreviousValidIndex(partsIndex.value.bases, availableParts.bases.length);
 };
 
 </script>
