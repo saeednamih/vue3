@@ -168,7 +168,7 @@ const selectPrevBase = () => {
 };
 
 </script>
-<style>
+<style scoped>
 .part {
   position: relative;
   width: 200px;
