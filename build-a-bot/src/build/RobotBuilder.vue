@@ -1,15 +1,26 @@
 <template>
-<div>
-  <diV class="add-to-cart-wrapper">
-    <button class="add-to-cart" @click="addToCatt()">
-      Add To Card
-    </button>
-    <div>
-      cost:{{ toCurrency(cost) }}
+  <div class="content">
+    <div class="preview">
+      <CollapsibleSection>
+        <template v-slot:collapse>&#x25B2; Hide</template>
+        <template v-slot:expand>&#x25BC; Show</template>
+        <div class="preview-content">
+          <div class="top-row">
+            <img :src="selectedRobot.head.imageUrl" alt="header" />
+          </div>
+          <div class="middle-row">
+            <img :src="selectedRobot.leftArm.imageUrl" class="rotate-left" alt="left"/>
+            <img :src="selectedRobot.torso.imageUrl" alt="torso" />
+            <img :src="selectedRobot.rightArm.imageUrl" class="rotate-right" alt="right" />
+          </div>
+          <div class="bottom-row">
+            <img :src="selectedRobot.base.imageUrl" alt="imageUrl" />
+          </div>
+        </div>
+      </CollapsibleSection>
+      <button class="add-to-cart" @click="addToCart()">Add to Cart</button>
     </div>
-  </diV>
   <div class="top-row">
-    <div class="top part">
       <!--  v-once  on;y render one time -->
         <!-- v-show == v-if show and hide element
         v-show:display none
@@ -17,158 +28,77 @@
         -->
       <div class="robot-name">
         {{ selectedRobot.head.title }}
-      <span v-if="selectedRobot.head.onSale" class="sale">sale</span>
+      <span v-if="selectedRobot.head.onSale" class="sale">Sale!</span>
       </div>
-      <img :src="selectedRobot.head.imageUrl" alt="head" />
-      <button @click="selectPrevHead" class="prev-selector">&#9668;</button>
-      <button @click="selectNextHead" class="next-selector">&#9658;</button>
+      <PartSelector :parts="availableParts.heads"
+        position="top" @partSelected="part => selectedRobot.head = part" />
+    </div>
+    <div class="middle-row">
+      <PartSelector :parts="availableParts.arms"
+       position="left" @partSelected="part => selectedRobot.leftArm = part" />
+      <PartSelector :parts="availableParts.torsos"
+       position="center" @partSelected="part => selectedRobot.torso = part" />
+      <PartSelector :parts="availableParts.arms"
+       position="right" @partSelected="part => selectedRobot.rightArm = part" />
+    </div>
+    <div class="bottom-row">
+      <PartSelector :parts="availableParts.bases"
+       position="bottom" @partSelected="part => selectedRobot.base = part" />
     </div>
   </div>
-  <div class="middle-row">
-    <div class="left part">
-      <img  :src="selectedRobot.leftArm.imageUrl" alt="left arm" />
-      <button @click="selectPrevlefttArm" class="prev-selector">&#9650;</button>
-      <button @click="selectNexLeftArm" class="next-selector">&#9660;</button>
-    </div>
-    <div class="center part">
-      <img  v-bind:src="selectedRobot.torsos.imageUrl" alt="torso" />
-      <button  @click="selectPrevTorso" class="prev-selector">&#9668;</button>
-      <button  @click="selectNextTorso"  class="next-selector">&#9658;</button>
-    </div>
-    <div class="right part">
-      <img  v-bind:src="selectedRobot.rightArm.imageUrl" alt="right arm" />
-      <button @click="selectPrevRightArm" class="prev-selector">&#9650;</button>
-      <button @click="selectNextRightArm"  class="next-selector">&#9660;</button>
-    </div>
+  <div>
+    <h1>Cart</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>Robot</th>
+          <th class="cost">Cost</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(robot, index) in cart" :key="index">
+          <td>{{ robot.head.title }}</td>
+          <td class="cost">{{ toCurrency(robot.cost) }}</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
-  <div class="bottom-row">
-    <div class="bottom part">
-      <img  v-bind:src="selectedRobot.bases.imageUrl" alt="base" />
-      <button @click="selectPrevBase" class="prev-selector">&#9668;</button>
-      <button @click="selectNextBase"  class="next-selector">&#9658;</button>
-    </div>
-  </div>
-</div>
-<div>
-<h1>Cart</h1>
-<table>
-  <thead>
-    <tr>
-      <th>
-        Robot
-      </th>
-      <th>
-        cost
-      </th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr v-for="(robot,index) in cart"  :key="index">
-      <td>{{ robot.head.title }}</td>
-      <td>{{ toCurrency(robot.cost) }}</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-  </template>
+</template>
+
 <script setup>
-import {
-  computed, ref, reactive, onMounted,
-} from 'vue';
+import { computed, ref, onMounted } from 'vue';
 import parts from '../data/part';
 import { toCurrency } from '../shared/formatters';
+import PartSelector from './PartSelector.vue';
+// import CollapsibleSection from '../shared/CollapsibleSection.vue';
 
-onMounted(() => {
-  console.log('created');
-});
 const availableParts = parts;
-const partsIndex = ref({
-  head: 0,
-  leftArm: 0,
-  rightArm: 0,
-  bases: 0,
-  torsos: 0,
-});
-const cart = reactive([]);
-function getPreviousValidIndex(index, length) {
-  const deprecatedIndex = index - 1;
-  return deprecatedIndex < 0 ? length - 1 : deprecatedIndex;
-}
+const cart = ref([]);
 
-function getNextValidIndex(index, length) {
-  debugger;
-  const incrementedIndex = index + 1;
-  return incrementedIndex > length + 1 ? 0 : incrementedIndex;
-}
-const selectedRobot = computed(() => {
-  console.log('data method');
-  return {
-    head: availableParts.heads[partsIndex.value.head],
-    leftArm: availableParts.arms[partsIndex.value.leftArm],
-    rightArm: availableParts.arms[partsIndex.value.rightArm],
-    torsos: availableParts.torsos[partsIndex.value.torsos],
-    bases: availableParts.bases[partsIndex.value.bases],
-  };
+onMounted(() => console.log('onMounted executed'));
+const selectedRobot = ref({
+  head: {},
+  leftArm: {},
+  torso: {},
+  rightArm: {},
+  base: {},
 });
 
-const addToCatt = () => {
-  debugger;
+const headBorderColor = computed(() => (selectedRobot.value.head.onSale ? 'red' : '#aaa'));
+
+const addToCart = () => {
   const robot = selectedRobot.value;
   const cost = robot.head.cost +
-          robot.rightArm.cost +
-          robot.leftArm.cost +
-          robot.rightArm.cost +
-          robot.torsos.cost +
-          robot.bases.cost;
-  cart.push({ ...robot, cost });
+    robot.leftArm.cost +
+    robot.torso.cost +
+    robot.rightArm.cost +
+    robot.base.cost;
+  cart.value.push({ ...robot, cost });
+  console.log(cart.value.length);
 };
-const selectNextHead = () => {
-  partsIndex.value.head = getNextValidIndex(
-    partsIndex.value.head,
-    availableParts.heads.length,
-  );
-};
-const selectPrevHead = () => {
-  partsIndex.value.head = getPreviousValidIndex(
-    partsIndex.value.head,
-    availableParts.heads.length,
-  );
-};
-const selectNexLeftArm = () => {
-  partsIndex.value.leftArm =
-       getNextValidIndex(partsIndex.value.leftArm, availableParts.arms.length);
-};
-const selectPrevlefttArm = () => {
-  partsIndex.value.leftArm
-      = getPreviousValidIndex(partsIndex.value.leftArm, availableParts.arms.length);
-};
-const selectNextTorso = () => {
-  partsIndex.value.torsos =
-       getNextValidIndex(partsIndex.value.torsos, availableParts.torsos.length);
-};
-const selectPrevTorso = () => {
-  partsIndex.value.torsos =
-      getPreviousValidIndex(partsIndex.value.torsos, availableParts.torsos.length);
-};
-const selectPrevRightArm = () => {
-  partsIndex.value.rightArm =
-      getPreviousValidIndex(partsIndex.value.rightArm, availableParts.arms.length);
-};
-const selectNextRightArm = () => {
-  partsIndex.value.rightArm =
-       getNextValidIndex(partsIndex.value.rightArm, availableParts.arms.length);
-};
-const selectNextBase = () => {
-  partsIndex.value.bases =
-      getNextValidIndex(partsIndex.value.bases, availableParts.bases.length);
-};
-const selectPrevBase = () => {
-  partsIndex.value.bases =
-      getPreviousValidIndex(partsIndex.value.bases, availableParts.bases.length);
-};
-
 </script>
-<style scoped>
+
+<style lang="scss" scoped>
 .part {
   position: relative;
   width: 200px;
@@ -176,8 +106,14 @@ const selectPrevBase = () => {
   border: 3px solid #aaa;
 }
 
-.part img {
+.top.part {
+  border: 3px solid v-bind(headBorderColor);
+}
+
+.part {
+img {
   width: 200px;
+  }
 }
 
 .top-row {
@@ -277,39 +213,19 @@ const selectPrevBase = () => {
   right: -3px;
 }
 
-.robot-name{
-  font-size: 15px;
-  align-items: center;
+.robot-name {
   position: absolute;
-  width: 100%;
   top: -25px;
   text-align: center;
+  width: 100%;
 }
-.sale{
-  color: red
+
+.sale {
+  color: red;
 }
-.add-to-cart-wrapper{
+
+.content {
   position: relative;
-
-}
-.add-to-cart{
-  position: absolute;
-  right: 30px;
-  padding: 3px;
-
-font-size: 16px;
-width: 220px;
-}
-
-td,
-th {
-  text-align: left;
-  padding: 5px;
-  padding-right: 20px;
-}
-
-.cost {
-  text-align: right;
 }
 
 .preview {
@@ -323,7 +239,6 @@ th {
 
 .preview-content {
   border: 1px solid #999;
-  padding: 10px;
 }
 
 .preview img {
@@ -337,5 +252,23 @@ th {
 
 .rotate-left {
   transform: rotate(-90deg);
+}
+
+.add-to-cart {
+  position: absolute;
+  width: 310px;
+  padding: 3px;
+  font-size: 16px;
+}
+
+td,
+th {
+  text-align: left;
+  padding: 5px;
+  padding-right: 20px;
+}
+
+.cost {
+  text-align: right;
 }
 </style>
