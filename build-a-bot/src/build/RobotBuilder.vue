@@ -70,7 +70,7 @@ import { computed, ref, onMounted } from 'vue';
 import parts from '../data/part';
 import { toCurrency } from '../shared/formatters';
 import PartSelector from './PartSelector.vue';
-// import CollapsibleSection from '../shared/CollapsibleSection.vue';
+import CollapsibleSection from '../shared/CollapsibleSection.vue';
 
 const availableParts = parts;
 const cart = ref([]);
