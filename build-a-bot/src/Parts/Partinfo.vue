@@ -15,7 +15,7 @@ import Parts from '../data/part';
 
 const props = defineProps(['partType', 'id']);
 const part = computed(() => {
-  // const route = useRoute();
+  // const route = useRoute(); second way
   // const { partType, id } = route.params;
   const pa = Parts[props.partType].find((p) => p.id === +props.id);
   console.log('pa', pa);
