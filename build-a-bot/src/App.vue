@@ -3,8 +3,24 @@
     <nav>
       <ul>
         <li class="nav-item">
-          <img class="logo" src="./assets/build-a-bot-logo.png" alt="logo" />
+          <router-link :to="{name:'Home'}" class="nav-link" active-class ="home-active">
+          <img class="logo" src="./assets/build-a-bot-logo.png" alt="logo"  />
+          Home
+        </router-link>
+        </li>
+
+        <li class="nav-item">
+          <router-link :to="{name:'Build'}" class="nav-link">
+
           Build a robot
+        </router-link>
+        </li>
+
+        <li class="nav-item">
+          <router-link :to="{name:'Search'}" class="nav-link">
+
+            Search
+        </router-link>
         </li>
       </ul>
     </nav>
@@ -12,24 +28,11 @@
 <div class="main">
   <!-- <HomePage msg="Welcome to Your Vue.js App"/> -->
   <!-- <ProductSearch/> -->
-   <RobotBuilder/>
+   <router-view/>
 </div>
 </template>
 
 <script>
-// import ProductSearch from './search/ProductSearch.vue';
-import RobotBuilder from './build/RobotBuilder.vue';
-
-// import HomePage from './home/HomePage.vue';
-
-export default {
-  name: 'App',
-  components: {
-    // HomePage,
-    RobotBuilder,
-    // ProductSearch,
-  },
-};
 </script>
 <style>
   #app {
@@ -67,4 +70,19 @@ border-right: 1px solid #bbb;
   vertical-align: middle;
   height: 30px;
 }
+.nav-link{
+  text-decoration: none;
+  color: inherit;
+  &:hover{
+    color: #bbb;
+  }
+}
+ .router-link-active{
+  color:white
+}
+
+ .home-active{
+color: white;
+text-shadow: 2px 2px black;
+ }
 </style>
