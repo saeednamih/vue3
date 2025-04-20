@@ -1,5 +1,5 @@
 <template>
-  <div class="content">
+  <div class="content" v-if="partStore.parts">
     <div class="preview">
       <CollapsibleSection>
         <template v-slot:collapse>&#x25B2; Hide</template>
@@ -30,19 +30,19 @@
         {{ selectedRobot.head.title }}
       <span v-if="selectedRobot.head.onSale" class="sale">Sale!</span>
       </div>
-      <PartSelector :parts="availableParts.heads"
+      <PartSelector :parts="partStore.parts.heads"
         position="top" @partSelected="part => selectedRobot.head = part" />
     </div>
     <div class="middle-row">
-      <PartSelector :parts="availableParts.arms"
+      <PartSelector :parts="partStore.parts.arms"
        position="left" @partSelected="part => selectedRobot.leftArm = part" />
-      <PartSelector :parts="availableParts.torsos"
+      <PartSelector :parts="partStore.parts.torsos"
        position="center" @partSelected="part => selectedRobot.torso = part" />
-      <PartSelector :parts="availableParts.arms"
+      <PartSelector :parts="partStore.parts.arms"
        position="right" @partSelected="part => selectedRobot.rightArm = part" />
     </div>
     <div class="bottom-row">
-      <PartSelector :parts="availableParts.bases"
+      <PartSelector :parts="partStore.parts.bases"
        position="bottom" @partSelected="part => selectedRobot.base = part" />
     </div>
   </div>
@@ -56,7 +56,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(robot, index) in cart" :key="index">
+        <tr v-for="(robot, index) in cartStore.cart" :key="index">
           <td>{{ robot.head.title }}</td>
           <td class="cost">{{ toCurrency(robot.cost) }}</td>
         </tr>
@@ -67,13 +67,17 @@
 
 <script setup>
 import { computed, ref, onMounted } from 'vue';
-import parts from '../data/part';
+import { useCartStore } from '@/stores/cartStore';
+// import parts from '../data/part';
+import { usePartStore } from '@/stores/partStore';
 import { toCurrency } from '../shared/formatters';
 import PartSelector from './PartSelector.vue';
 import CollapsibleSection from '../shared/CollapsibleSection.vue';
 
-const availableParts = parts;
-const cart = ref([]);
+// const cart = ref([]);
+const cartStore = useCartStore();
+const partStore = usePartStore();
+partStore.getParts();
 
 onMounted(() => console.log('onMounted executed'));
 const selectedRobot = ref({
@@ -93,8 +97,8 @@ const addToCart = () => {
     robot.torso.cost +
     robot.rightArm.cost +
     robot.base.cost;
-  cart.value.push({ ...robot, cost });
-  console.log(cart.value.length);
+  cartStore.cart.push({ ...robot, cost });
+  // console.log(cart.value.length);
 };
 </script>
 

@@ -15,11 +15,20 @@
       <tbody>
         <tr v-for="(robot, index) in cartStore.cart" :key="index">
           <td class="robot-title">
-            <img :src="robot.head.imageUrl" /> {{ robot.head.title }}
+            <img :src="robot.head.imageUrl" alt="cart" /> {{ robot.head.title }}
           </td>
           <td class="cost">
             {{ toCurrency(robot.cost) }}
           </td>
+        </tr>
+        <tr>
+          <td>
+            Totasl
+            </td>
+            <td>
+              {{ cartStore.cartTotal }}
+            </td>
+
         </tr>
       </tbody>
     </table>

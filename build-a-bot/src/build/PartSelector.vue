@@ -1,3 +1,5 @@
+<!-- eslint-disable vuejs-accessibility/click-events-have-key-events -->
+<!-- eslint-disable max-len -->
 <template>
   <div class="part" :class="position">
     <router-link :to="{
@@ -6,13 +8,20 @@
     }"> <img :src="selectedPart.imageUrl" alt="part" /> </router-link>
     <button @click="selectPreviousPart()" class="prev-selector"></button>
     <button @click="selectNextPart()" class="next-selector"></button>
-    <span class="sale" v-show="selectedPart.onSale">Sale!</span>
+    <!-- <span v-pin.right.bottom class="sale" v-show="selectedPart.onSale">Sale!</span> -->
+    <!-- <span v-pin="{bottom:'5px',right:'5px'}" class="sale" v-show="selectedPart.onSale">Sale!</span> -->
+
+    <span v-pin="{bottom:paddingProp,right:paddingProp}"
+     @click="paddingProp='10px'" class="sale" v-show="selectedPart.onSale">Sale!</span>
+
   </div>
 </template>
 
 <script setup>
 import { computed, ref, onUpdated } from 'vue';
+// import vPin from '../shared/pin-directive';
 
+const paddingProp = ref('20px');
 const props = defineProps({
   parts: { type: Array, required: true },
   position: {
@@ -63,9 +72,9 @@ const selectPreviousPart = () => {
 }
 
 .sale {
-  position: absolute;
+  /* position: absolute;
   bottom: 5px;
-  right: 5px;
+  right: 5px; */
   color: white;
   background-color: red;
   padding: 3px;

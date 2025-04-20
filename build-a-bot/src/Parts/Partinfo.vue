@@ -9,15 +9,17 @@
 </template>
 
 <script setup>
+import { usePartStore } from '@/stores/partStore';
 import { computed } from 'vue';
 // import { useRoute } from 'vue-router';
-import Parts from '../data/part';
+// import Parts from '../data/part';
 
 const props = defineProps(['partType', 'id']);
+const partStore = usePartStore();
 const part = computed(() => {
   // const route = useRoute(); second way
   // const { partType, id } = route.params;
-  const pa = Parts[props.partType].find((p) => p.id === +props.id);
+  const pa = partStore.parts[props.partType].find((p) => p.id === +props.id);
   console.log('pa', pa);
   return pa;
 });
